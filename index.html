@@ -9,7 +9,6 @@
     .button-container {
       position: relative;
       width: 150px; /* Set width of the button */
-      height: auto;
       cursor: pointer;
     }
 
@@ -32,6 +31,14 @@
       background-size: cover;
       background-position: center;
       display: none; /* Hidden by default */
+      opacity: 0; /* Use opacity for smooth transitions */
+      transition: opacity 0.3s ease-in-out;
+    }
+
+    /* Show the stop overlay */
+    .stop-overlay.show {
+      display: block;
+      opacity: 1;
     }
   </style>
 </head>
@@ -65,14 +72,29 @@
       if (isPlaying) {
         // Pause the audio
         audioPlayer.pause();
-        stopOverlay.style.display = 'none'; // Hide stop overlay
       } else {
         // Play the audio
+        audioPlayer.load(); // Ensure the audio is loaded
         audioPlayer.play();
-        stopOverlay.style.display = 'block'; // Show stop overlay
       }
-      isPlaying = !isPlaying; // Toggle the state
+    });
+
+    // Listen for play and pause events
+    audioPlayer.addEventListener('play', () => {
+      isPlaying = true;
+      stopOverlay.classList.add('show'); // Show stop overlay
+    });
+
+    audioPlayer.addEventListener('pause', () => {
+      isPlaying = false;
+      stopOverlay.classList.remove('show'); // Hide stop overlay
+    });
+
+    // Error handling
+    audioPlayer.addEventListener('error', () => {
+      console.error('Error: Unable to play the audio. Please check the file path or source.');
     });
   </script>
 </body>
 </html>
+
